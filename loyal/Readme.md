@@ -1,3 +1,7 @@
+<p align="center">
+  <img width="300" height="auto" src="https://user-images.githubusercontent.com/108969749/201538813-989e3a31-d21c-4bfe-8c6d-d8e30368a3fb.jpeg">
+</p>
+
 ### Spesifikasi Hardware :
 NODE  | CPU     | RAM      | SSD     |
 | ------------- | ------------- | ------------- | -------- |
