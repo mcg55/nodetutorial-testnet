@@ -133,12 +133,12 @@ nibid tx distribution withdraw-rewards $NIBI_VALOPER_ADDRESS --from=$WALLET --co
 
 ### Hapus node
 ```
-sudo systemctl stop nibid
-sudo systemctl disable nibid
-sudo rm /etc/systemd/system/nibi* -rf
-sudo rm $(which nibid) -rf
-sudo rm $HOME/.nibi* -rf
-sudo rm -rf nibi.sh
-sudo rm $HOME/nibi -rf
-sed -i '/NIBI_/d' ~/.bash_profile
+sudo systemctl stop nibid && \
+sudo systemctl disable nibid && \
+rm /etc/systemd/system/nibid.service && \
+sudo systemctl daemon-reload && \
+cd $HOME && \
+rm -rf nibiru.sh && \
+rm -rf .nibid && \
+rm -rf $(which nibid)
 ```
