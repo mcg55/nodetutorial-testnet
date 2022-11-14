@@ -94,7 +94,7 @@ sed -i -e "s/^pruning-interval *=.*/pruning-interval = \"$pruning_interval\"/" $
 sed -i -e "s/^minimum-gas-prices *=.*/minimum-gas-prices = \"0utlore\"/" $HOME/.gitopia/config/app.toml
 
 # enable prometheus
-sed -i -e "s/prometheus = false/prometheus = true/" $HOME/.gitopa/config/config.toml
+sed -i -e "s/prometheus = false/prometheus = true/" $HOME/.gitopia/config/config.toml
 
 # reset
 gitopiad tendermint unsafe-reset-all --home $HOME/.gitopia
