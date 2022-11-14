@@ -138,12 +138,12 @@ loyald tx distribution withdraw-rewards $LOYAL_VALOPER_ADDRESS --from=$WALLET --
 
 ### Hapus node
 ```
-sudo systemctl stop loyald
-sudo systemctl disable loyald
-sudo rm /etc/systemd/system/loyal* -rf
-sudo rm $(which loyald) -rf
-sudo rm $HOME/.loyal* -rf
-sudo rm -rf loyal.sh
-sudo rm $HOME/loyal -rf
-sed -i '/LOYAL_/d' ~/.bash_profile
+sudo systemctl stop loyald && \
+sudo systemctl disable loyald && \
+rm /etc/systemd/system/loyald.service && \
+sudo systemctl daemon-reload && \
+cd $HOME && \
+rm -rf loyal.sh && \
+rm -rf .loyal && \
+rm -rf $(which loyald)
 ```
