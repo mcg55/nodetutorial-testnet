@@ -131,12 +131,12 @@ terpd tx distribution withdraw-rewards $TERP_VALOPER_ADDRESS --from=$WALLET --co
 
 ### Hapus node
 ```
-sudo systemctl stop terpd
-sudo systemctl disable terpd
-sudo rm /etc/systemd/system/terp* -rf
-sudo rm $(which terpd) -rf
-sudo rm $HOME/.terp* -rf
-sudo rm -rf terp.sh
-sudo rm $HOME/terp -rf
-sed -i '/TERP_/d' ~/.bash_profile
+sudo systemctl stop terpd && \
+sudo systemctl disable terpd && \
+rm /etc/systemd/system/terpd.service && \
+sudo systemctl daemon-reload && \
+cd $HOME && \
+rm -rf terp.sh && \
+rm -rf .terp && \
+rm -rf $(which terpd)
 ```
