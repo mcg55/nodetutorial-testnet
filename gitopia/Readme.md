@@ -40,7 +40,7 @@ gitopiad tendermint show-node-id
 ### Membuat wallet
 * wallet baru
 ```
-gitopid keys add $WALLET
+gitopiad keys add $WALLET
 ```
 * recover wallet
 ```
