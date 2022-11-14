@@ -104,7 +104,7 @@ echo -e "\e[1m\e[32m4. Starting service... \e[0m" && sleep 1
 # create service
 sudo tee /etc/systemd/system/terpd.service > /dev/null <<EOF
 [Unit]
-Description=terpd
+Description=terp
 After=network-online.target
 
 [Service]
