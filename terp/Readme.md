@@ -95,7 +95,7 @@ terpd tx staking create-validator \
 ```
 * edit validator
 ```
-terd tx staking edit-validator \
+terpd tx staking edit-validator \
   --moniker=$NODENAME \
   --identity=<your_keybase_id> \
   --website="<your_website>" \
