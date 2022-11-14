@@ -87,7 +87,7 @@ gitopiad query bank balances $GITOPIA_WALLET_ADDRESS
 * membuat validator
 ```
 gitopiad tx staking create-validator \
-  --amount 1000000ujkl \
+  --amount 1000000utlore \
   --from $WALLET \
   --commission-max-change-rate "0.01" \
   --commission-max-rate "0.2" \
