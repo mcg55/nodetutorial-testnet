@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="300" height="auto" src="https://user-images.githubusercontent.com/108969749/201539131-2a8481bc-7d50-47fe-8db8-96c7372d5a84.png">
+  <img width="300" height="auto" src="https://user-images.githubusercontent.com/108969749/201577161-6ceb4b84-03f0-4161-b0d8-88d844fdd8ba.jpeg">
 </p>
 
 ### Spesifikasi Hardware :
@@ -9,7 +9,7 @@ NODE  | CPU     | RAM      | SSD     |
 
 ### Install otomatis
 ```
-wget -O terp.sh https://raw.githubusercontent.com/Whalealert/nodetutorial-testnet/main/terp/terp.sh && chmod +x terp.sh && ./terp.sh
+wget -O gitopia.sh https://raw.githubusercontent.com/Whalealert/nodetutorial-testnet/main/gitopia/gitopia.sh && chmod +x gitopia.sh && ./gitopia.sh
 ```
 ### Load variable ke system
 ```
@@ -19,125 +19,129 @@ source $HOME/.bash_profile
 
 * cek sync node
 ```
-terpd status 2>&1 | jq .SyncInfo
+gitopiad status 2>&1 | jq .SyncInfo
 ```
 * cek log node
 ```
-journalctl -fu terpd -o cat
+journalctl -fu gitopiad -o cat
 ```
 * cek node info
 ```
-terpd status 2>&1 | jq .NodeInfo
+gitopiad status 2>&1 | jq .NodeInfo
 ```
 * cek validator info
 ```
-terpd status 2>&1 | jq .ValidatorInfo
+gitopiad status 2>&1 | jq .ValidatorInfo
 ```
 * cek node id
 ```
-terpd tendermint show-node-id
+gitopiad tendermint show-node-id
 ```
 ### Membuat wallet
 * wallet baru
 ```
-terpd keys add $WALLET
+gitopid keys add $WALLET
 ```
 * recover wallet
 ```
-terpd keys add $WALLET --recover
+gitopiad keys add $WALLET --recover
 ```
 * list wallet
 ```
-terpd keys list
+gitopiad keys list
 ```
 * hapus wallet
 ```
-terpd keys delete $WALLET
+gitopiad keys delete $WALLET
 ```
 ### Simpan informasi wallet
 ```
-TERP_WALLET_ADDRESS=$(terpd keys show $WALLET -a)
-TERP_VALOPER_ADDRESS=$(terpd keys show $WALLET --bech val -a)
-echo 'export TERP_WALLET_ADDRESS='${TERP_WALLET_ADDRESS} >> $HOME/.bash_profile
-echo 'export TERP_VALOPER_ADDRESS='${TERP_VALOPER_ADDRESS} >> $HOME/.bash_profile
+GITOPIA_WALLET_ADDRESS=$(gitopiad keys show $WALLET -a)
+GITOPIA_VALOPER_ADDRESS=$(gitopiad keys show $WALLET --bech val -a)
+echo 'export GITOPIA_WALLET_ADDRESS='${GITOPIA_WALLET_ADDRESS} >> $HOME/.bash_profile
+echo 'export GITOPIA_VALOPER_ADDRESS='${GITOPIA_VALOPER_ADDRESS} >> $HOME/.bash_profile
 source $HOME/.bash_profile
 ```
-### Statesync by #NodeJumper
+### Statesync by #Polkachu
 ```
-sudo systemctl stop terpd
-cp $HOME/.terp/data/priv_validator_state.json $HOME/.terp/priv_validator_state.json.backup
-terpd tendermint unsafe-reset-all --home $HOME/.terp --keep-addr-book
-rm -rf $HOME/.terp/data 
-rm -rf $HOME/.terp/wasm
-SNAP_NAME=$(curl -s https://snapshots2-testnet.nodejumper.io/terpnetwork-testnet/ | egrep -o ">athena-2.*\.tar.lz4" | tr -d ">")
-curl https://snapshots2-testnet.nodejumper.io/terpnetwork-testnet/${SNAP_NAME} | lz4 -dc - | tar -xf - -C $HOME/.terp
-mv $HOME/.terp/priv_validator_state.json.backup $HOME/.terp/data/priv_validator_state.json
-sudo systemctl restart terpd
-sudo journalctl -u terpd -f --no-hostname -o cat
+SNAP_RPC=https://gitopia-testnet-rpc.polkachu.com:443
+peers="fbe3b1e34e1dfe9ae2cd0db471b0a807bbb3c5f2@65.109.90.178:11356"
+sed -i 's|^persistent_peers *=.*|persistent_peers = "'$peers'"|' $HOME/.gitopia/config/config.toml
+LATEST_HEIGHT=$(curl -s $SNAP_RPC/block | jq -r .result.block.header.height); \
+BLOCK_HEIGHT=$((LATEST_HEIGHT - 1000)); \
+TRUST_HASH=$(curl -s "$SNAP_RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
+echo $LATEST_HEIGHT $BLOCK_HEIGHT $TRUST_HASH
+sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
+s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"$SNAP_RPC,$SNAP_RPC\"| ; \
+s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
+s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"| ; \
+s|^(seeds[[:space:]]+=[[:space:]]+).*$|\1\"\"|" $HOME/.gitopia/config/config.toml
+gitopiad tendermint unsafe-reset-all --home /root/.gitopia
+systemctl restart gitopiad && journalctl -u gitopiad -f -o cat
 ```
 ### Membuat validator
 * cek balance
 ```
-terpd query bank balances $TERP_WALLET_ADDRESS
+gitopiad query bank balances $GITOPIA_WALLET_ADDRESS
 ```
 * membuat validator
 ```
-terpd tx staking create-validator \
-  --amount 100000000uterpx \
+gitopiad tx staking create-validator \
+  --amount 1000000ujkl \
   --from $WALLET \
   --commission-max-change-rate "0.01" \
   --commission-max-rate "0.2" \
   --commission-rate "0.07" \
   --min-self-delegation "1" \
-  --pubkey  $(terpd tendermint show-validator) \
+  --pubkey  $(gitopiad tendermint show-validator) \
   --moniker $NODENAME \
-  --chain-id $TERP_CHAIN_ID
+  --chain-id $GITOPIA_CHAIN_ID
 ```
 * edit validator
 ```
-terd tx staking edit-validator \
+gitopiad tx staking edit-validator \
   --moniker=$NODENAME \
   --identity=<your_keybase_id> \
   --website="<your_website>" \
   --details="<your_validator_description>" \
-  --chain-id=$TERP_CHAIN_ID \
+  --chain-id=$GITOPIA_CHAIN_ID \
   --from=$WALLET
 ```
 * unjail validator
 ```
-terpd tx slashing unjail \
+gitopiad tx slashing unjail \
   --broadcast-mode=block \
   --from=$WALLET \
-  --chain-id=$TERP_CHAIN_ID \
+  --chain-id=$GITOPIA_CHAIN_ID \
   --gas=auto
 ```
 ### Voting
 ```
-terpd tx gov vote 1 yes --from $WALLET --chain-id=$TERP_CHAIN_ID
+gitopiad tx gov vote 1 yes --from $WALLET --chain-id=$GITOPIA_CHAIN_ID
 ```
 ### Delegasi dan Rewards
 * delegasi
 ```
-terpd tx staking delegate $TERP_VALOPER_ADDRESS 1000000uterpx --from=$WALLET --chain-id=TERP_CHAIN_ID --gas=auto
+gitopiad tx staking delegate $GITOPIA_VALOPER_ADDRESS 1000000ujkl --from=$WALLET --chain-id=GITOPIA_CHAIN_ID --gas=auto
 ```
 * withdraw reward
 ```
-terpd tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$TERP_CHAIN_ID --gas=auto
+gitopiad tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$GITOPIA_CHAIN_ID --gas=auto
 ```
 * withdraw reward beserta komisi
 ```
-terpd tx distribution withdraw-rewards $TERP_VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$TERP_CHAIN_ID
+gitopiad tx distribution withdraw-rewards $GITOPIA_VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$GITOPIA_CHAIN_ID
 ```
 
 ### Hapus node
 ```
-sudo systemctl stop terpd
-sudo systemctl disable terpd
-sudo rm /etc/systemd/system/terp* -rf
-sudo rm $(which terpd) -rf
-sudo rm $HOME/.terp* -rf
-sudo rm -rf terp.sh
-sudo rm $HOME/terp -rf
-sed -i '/TERP_/d' ~/.bash_profile
+sudo systemctl stop gitopiad && \
+sudo systemctl disable gitopiad && \
+rm /etc/systemd/system/gitopiad.service && \
+sudo systemctl daemon-reload && \
+cd $HOME && \
+rm -rf gitopia && \
+rm -rf .gitopia && \
+rm -rf $(which gitopiad)
 ```
 
